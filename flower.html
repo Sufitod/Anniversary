@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Blossoming Flowers at Magical Night</title>
+  <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500&display=swap" rel="stylesheet">
+    <style>
+      /* ===== scattered memory polaroids ===== */
+      .memories{ position:fixed; inset:0; z-index:30; pointer-events:none; }
+
+      .polaroid{
+        position:absolute; width:var(--w);
+        left:var(--x, auto); right:var(--xr, auto); top:var(--y);
+        opacity:0;
+        animation:polIn 1.3s cubic-bezier(.2,.8,.2,1) forwards;
+        animation-delay:var(--d);
+        pointer-events:auto; cursor:pointer;
+        -webkit-tap-highlight-color:transparent;
+      }
+      .polaroid-inner{
+        position:relative;
+        padding:7px 7px 26px;
+        background:#f5efe6;
+        box-shadow:0 10px 26px rgba(0,0,0,0.55), 0 0 18px rgba(205,166,90,0.12);
+        transform:rotate(var(--r));
+        animation:polFloat var(--fs, 7s) ease-in-out infinite;
+        animation-delay:var(--d);
+        transition:transform 0.4s ease, box-shadow 0.4s ease;
+      }
+      .polaroid:hover .polaroid-inner{ transform:rotate(0deg) scale(1.06); z-index:5; }
+      /* little strip of tape */
+      .polaroid-inner::before{
+        content:""; position:absolute; top:-9px; left:50%;
+        width:46px; height:16px; transform:translateX(-50%) rotate(var(--tr, -3deg));
+        background:rgba(230,207,156,0.55);
+        box-shadow:0 1px 3px rgba(0,0,0,0.25);
+      }
+      .polaroid-photo{
+        position:relative; aspect-ratio:4/5; overflow:hidden;
+        background:linear-gradient(150deg, #22293f, #2a3358 60%, #333d66);
+        display:flex; align-items:center; justify-content:center;
+        color:#e6cf9c; font-size:22px; opacity:1;
+      }
+      .polaroid-photo img{
+        position:absolute; inset:0; width:100%; height:100%;
+        object-fit:cover; display:block;
+      }
+      @keyframes polIn{
+        from{ opacity:0; transform:translateY(34px) scale(0.88); }
+        to  { opacity:1; transform:translateY(0) scale(1); }
+      }
+      @keyframes polFloat{
+        0%,100%{ translate:0 0; }
+        50%    { translate:0 -5px; }
+      }
+
+      /* desktop layout: spread over the empty sky and sides */
+      .p1{ --x:4%;   --y:6%;  --w:170px; --r:-8deg; --d:4.2s; --tr:-4deg; --fs:7s; }
+      .p2{ --x:17%;  --y:21%; --w:148px; --r:6deg;  --d:5.2s; --tr:3deg;  --fs:8s; }
+      .p3{ --x:5%;   --y:41%; --w:138px; --r:4deg;  --d:6.2s; --tr:-2deg; --fs:6.5s; }
+      .p4{ --xr:5%;  --y:8%;  --w:164px; --r:7deg;  --d:4.7s; --tr:3deg;  --fs:7.5s; }
+      .p5{ --xr:18%; --y:25%; --w:148px; --r:-5deg; --d:5.7s; --tr:-3deg; --fs:8.5s; }
+      .p6{ --xr:4%;  --y:45%; --w:138px; --r:-9deg; --d:6.7s; --tr:4deg;  --fs:7s; }
+
+      /* phone layout: keep clear of the flowers at the bottom */
+      @media (max-width:700px){
+        .p1{ --x:4%;   --y:4%;  --w:108px; --r:-8deg; }
+        .p2{ --x:39%;  --y:7%;  --w:100px; --r:5deg;  }
+        .p3{ --x:8%;   --y:25%; --w:104px; --r:6deg;  }
+        .p4{ --xr:3%;  --y:3%;  --w:104px; --r:7deg;  }
+        .p5{ --xr:5%;  --y:23%; --w:108px; --r:-6deg; }
+        .p6{ --x:35%;  --y:35%; --w:96px;  --r:-9deg; }
+      }
+
+      /* enlarge a photo */
+      .mem-lightbox{
+        position:fixed; inset:0; z-index:60;
+        background:rgba(0,0,0,0.9);
+        display:flex; align-items:center; justify-content:center; padding:24px;
+        opacity:0; visibility:hidden; cursor:zoom-out;
+        transition:opacity 0.4s ease, visibility 0.4s ease;
+      }
+      .mem-lightbox.show{ opacity:1; visibility:visible; }
+      .mem-lightbox img{
+        max-width:92vw; max-height:84vh;
+        border:6px solid #f5efe6; border-bottom-width:26px;
+        box-shadow:0 20px 60px rgba(0,0,0,0.7);
+      }
+
+      @media (prefers-reduced-motion: reduce){
+        .polaroid{ animation-duration:0.01s; }
+        .polaroid-inner{ animation:none; }
+      }
+    </style>
+</head>
+<!--  
+  CSS Blossoming Flowers at Magical Night.
+  Inspired by Yup Nguyen's Artwork: https://dribbble.com/shots/11096994-Virtual-Garden.
+  Made with Pure CSS & ♥
+-->
+<body class="not-loaded">
+  <div class="night"></div>
+  <div class="flowers">
+    <div class="flower flower--1">
+      <div class="flower__leafs flower__leafs--1">
+        <div class="flower__leaf flower__leaf--1"></div>
+        <div class="flower__leaf flower__leaf--2"></div>
+        <div class="flower__leaf flower__leaf--3"></div>
+        <div class="flower__leaf flower__leaf--4"></div>
+        <div class="flower__white-circle"></div>
+
+        <div class="flower__light flower__light--1"></div>
+        <div class="flower__light flower__light--2"></div>
+        <div class="flower__light flower__light--3"></div>
+        <div class="flower__light flower__light--4"></div>
+        <div class="flower__light flower__light--5"></div>
+        <div class="flower__light flower__light--6"></div>
+        <div class="flower__light flower__light--7"></div>
+        <div class="flower__light flower__light--8"></div>
+
+      </div>
+      <div class="flower__line">
+        <div class="flower__line__leaf flower__line__leaf--1"></div>
+        <div class="flower__line__leaf flower__line__leaf--2"></div>
+        <div class="flower__line__leaf flower__line__leaf--3"></div>
+        <div class="flower__line__leaf flower__line__leaf--4"></div>
+        <div class="flower__line__leaf flower__line__leaf--5"></div>
+        <div class="flower__line__leaf flower__line__leaf--6"></div>
+      </div>
+    </div>
+
+    <div class="flower flower--2">
+      <div class="flower__leafs flower__leafs--2">
+        <div class="flower__leaf flower__leaf--1"></div>
+        <div class="flower__leaf flower__leaf--2"></div>
+        <div class="flower__leaf flower__leaf--3"></div>
+        <div class="flower__leaf flower__leaf--4"></div>
+        <div class="flower__white-circle"></div>
+
+        <div class="flower__light flower__light--1"></div>
+        <div class="flower__light flower__light--2"></div>
+        <div class="flower__light flower__light--3"></div>
+        <div class="flower__light flower__light--4"></div>
+        <div class="flower__light flower__light--5"></div>
+        <div class="flower__light flower__light--6"></div>
+        <div class="flower__light flower__light--7"></div>
+        <div class="flower__light flower__light--8"></div>
+
+      </div>
+      <div class="flower__line">
+        <div class="flower__line__leaf flower__line__leaf--1"></div>
+        <div class="flower__line__leaf flower__line__leaf--2"></div>
+        <div class="flower__line__leaf flower__line__leaf--3"></div>
+        <div class="flower__line__leaf flower__line__leaf--4"></div>
+      </div>
+    </div>
+
+    <div class="flower flower--3">
+      <div class="flower__leafs flower__leafs--3">
+        <div class="flower__leaf flower__leaf--1"></div>
+        <div class="flower__leaf flower__leaf--2"></div>
+        <div class="flower__leaf flower__leaf--3"></div>
+        <div class="flower__leaf flower__leaf--4"></div>
+        <div class="flower__white-circle"></div>
+
+        <div class="flower__light flower__light--1"></div>
+        <div class="flower__light flower__light--2"></div>
+        <div class="flower__light flower__light--3"></div>
+        <div class="flower__light flower__light--4"></div>
+        <div class="flower__light flower__light--5"></div>
+        <div class="flower__light flower__light--6"></div>
+        <div class="flower__light flower__light--7"></div>
+        <div class="flower__light flower__light--8"></div>
+
+      </div>
+      <div class="flower__line">
+        <div class="flower__line__leaf flower__line__leaf--1"></div>
+        <div class="flower__line__leaf flower__line__leaf--2"></div>
+        <div class="flower__line__leaf flower__line__leaf--3"></div>
+        <div class="flower__line__leaf flower__line__leaf--4"></div>
+      </div>
+    </div>
+
+    <div class="grow-ans" style="--d:1.2s">
+      <div class="flower__g-long">
+        <div class="flower__g-long__top"></div>
+        <div class="flower__g-long__bottom"></div>
+      </div>
+    </div>
+
+    <div class="growing-grass">
+      <div class="flower__grass flower__grass--1">
+        <div class="flower__grass--top"></div>
+        <div class="flower__grass--bottom"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--1"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--2"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--3"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--4"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--5"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--6"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--7"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--8"></div>
+        <div class="flower__grass__overlay"></div>
+      </div>
+    </div>
+
+    <div class="growing-grass">
+      <div class="flower__grass flower__grass--2">
+        <div class="flower__grass--top"></div>
+        <div class="flower__grass--bottom"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--1"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--2"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--3"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--4"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--5"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--6"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--7"></div>
+        <div class="flower__grass__leaf flower__grass__leaf--8"></div>
+        <div class="flower__grass__overlay"></div>
+      </div>
+    </div>
+
+    <div class="grow-ans" style="--d:2.4s">
+      <div class="flower__g-right flower__g-right--1">
+        <div class="leaf"></div>
+      </div>
+    </div>
+
+    <div class="grow-ans" style="--d:2.8s">
+      <div class="flower__g-right flower__g-right--2">
+        <div class="leaf"></div>
+      </div>
+    </div>
+
+    <div class="grow-ans" style="--d:2.8s">
+      <div class="flower__g-front">
+        <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--1">
+          <div class="flower__g-front__leaf"></div>
+        </div>
+        <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--2">
+          <div class="flower__g-front__leaf"></div>
+        </div>
+        <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--3">
+          <div class="flower__g-front__leaf"></div>
+        </div>
+        <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--4">
+          <div class="flower__g-front__leaf"></div>
+        </div>
+        <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--5">
+          <div class="flower__g-front__leaf"></div>
+        </div>
+        <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--6">
+          <div class="flower__g-front__leaf"></div>
+        </div>
+        <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--7">
+          <div class="flower__g-front__leaf"></div>
+        </div>
+        <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--8">
+          <div class="flower__g-front__leaf"></div>
+        </div>
+        <div class="flower__g-front__line"></div>
+      </div>
+    </div>
+
+    <div class="grow-ans" style="--d:3.2s">
+      <div class="flower__g-fr">
+        <div class="leaf"></div>
+        <div class="flower__g-fr__leaf flower__g-fr__leaf--1"></div>
+        <div class="flower__g-fr__leaf flower__g-fr__leaf--2"></div>
+        <div class="flower__g-fr__leaf flower__g-fr__leaf--3"></div>
+        <div class="flower__g-fr__leaf flower__g-fr__leaf--4"></div>
+        <div class="flower__g-fr__leaf flower__g-fr__leaf--5"></div>
+        <div class="flower__g-fr__leaf flower__g-fr__leaf--6"></div>
+        <div class="flower__g-fr__leaf flower__g-fr__leaf--7"></div>
+        <div class="flower__g-fr__leaf flower__g-fr__leaf--8"></div>
+      </div>
+    </div>
+
+    <div class="long-g long-g--0">
+      <div class="grow-ans" style="--d:3s">
+        <div class="leaf leaf--0"></div>
+      </div>
+      <div class="grow-ans" style="--d:2.2s">
+        <div class="leaf leaf--1"></div>
+      </div>
+      <div class="grow-ans" style="--d:3.4s">
+        <div class="leaf leaf--2"></div>
+      </div>
+      <div class="grow-ans" style="--d:3.6s">
+        <div class="leaf leaf--3"></div>
+      </div>
+    </div>
+
+    <div class="long-g long-g--1">
+      <div class="grow-ans" style="--d:3.6s">
+        <div class="leaf leaf--0"></div>
+      </div>
+      <div class="grow-ans" style="--d:3.8s">
+        <div class="leaf leaf--1"></div>
+      </div>
+      <div class="grow-ans" style="--d:4s">
+        <div class="leaf leaf--2"></div>
+      </div>
+      <div class="grow-ans" style="--d:4.2s">
+        <div class="leaf leaf--3"></div>
+      </div>
+    </div>
+
+    <div class="long-g long-g--2">
+      <div class="grow-ans" style="--d:4s">
+        <div class="leaf leaf--0"></div>
+      </div>
+      <div class="grow-ans" style="--d:4.2s">
+        <div class="leaf leaf--1"></div>
+      </div>
+      <div class="grow-ans" style="--d:4.4s">
+        <div class="leaf leaf--2"></div>
+      </div>
+      <div class="grow-ans" style="--d:4.6s">
+        <div class="leaf leaf--3"></div>
+      </div>
+    </div>
+
+    <div class="long-g long-g--3">
+      <div class="grow-ans" style="--d:4s">
+        <div class="leaf leaf--0"></div>
+      </div>
+      <div class="grow-ans" style="--d:4.2s">
+        <div class="leaf leaf--1"></div>
+      </div>
+      <div class="grow-ans" style="--d:3s">
+        <div class="leaf leaf--2"></div>
+      </div>
+      <div class="grow-ans" style="--d:3.6s">
+        <div class="leaf leaf--3"></div>
+      </div>
+    </div>
+
+    <div class="long-g long-g--4">
+      <div class="grow-ans" style="--d:4s">
+        <div class="leaf leaf--0"></div>
+      </div>
+      <div class="grow-ans" style="--d:4.2s">
+        <div class="leaf leaf--1"></div>
+      </div>
+      <div class="grow-ans" style="--d:3s">
+        <div class="leaf leaf--2"></div>
+      </div>
+      <div class="grow-ans" style="--d:3.6s">
+        <div class="leaf leaf--3"></div>
+      </div>
+    </div>
+
+    <div class="long-g long-g--5">
+      <div class="grow-ans" style="--d:4s">
+        <div class="leaf leaf--0"></div>
+      </div>
+      <div class="grow-ans" style="--d:4.2s">
+        <div class="leaf leaf--1"></div>
+      </div>
+      <div class="grow-ans" style="--d:3s">
+        <div class="leaf leaf--2"></div>
+      </div>
+      <div class="grow-ans" style="--d:3.6s">
+        <div class="leaf leaf--3"></div>
+      </div>
+    </div>
+
+    <div class="long-g long-g--6">
+      <div class="grow-ans" style="--d:4.2s">
+        <div class="leaf leaf--0"></div>
+      </div>
+      <div class="grow-ans" style="--d:4.4s">
+        <div class="leaf leaf--1"></div>
+      </div>
+      <div class="grow-ans" style="--d:4.6s">
+        <div class="leaf leaf--2"></div>
+      </div>
+      <div class="grow-ans" style="--d:4.8s">
+        <div class="leaf leaf--3"></div>
+      </div>
+    </div>
+
+    <div class="long-g long-g--7">
+      <div class="grow-ans" style="--d:3s">
+        <div class="leaf leaf--0"></div>
+      </div>
+      <div class="grow-ans" style="--d:3.2s">
+        <div class="leaf leaf--1"></div>
+      </div>
+      <div class="grow-ans" style="--d:3.5s">
+        <div class="leaf leaf--2"></div>
+      </div>
+      <div class="grow-ans" style="--d:3.6s">
+        <div class="leaf leaf--3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- small golden garden clusters tucked into the empty corners -->
+  <div class="ground ground--left">
+    <div class="flower-container"></div>
+    <div class="flower-container"></div>
+    <div class="flower-container"></div>
+    <div class="flower-container"></div>
+  </div>
+  <div class="ground ground--right">
+    <div class="flower-container"></div>
+    <div class="flower-container"></div>
+    <div class="flower-container"></div>
+    <div class="flower-container"></div>
+  </div>
+
+  <div class="memories" id="memories">
+    <div class="polaroid p1"><div class="polaroid-inner"><div class="polaroid-photo">&#9825;<img src="6.jpeg" alt="" onerror="this.remove()"></div></div></div>
+    <div class="polaroid p2"><div class="polaroid-inner"><div class="polaroid-photo">&#9825;<img src="7.jpeg" alt="" onerror="this.remove()"></div></div></div>
+    <div class="polaroid p3"><div class="polaroid-inner"><div class="polaroid-photo">&#9825;<img src="8.jpeg" alt="" onerror="this.remove()"></div></div></div>
+    <div class="polaroid p4"><div class="polaroid-inner"><div class="polaroid-photo">&#9825;<img src="10.jpeg" alt="" onerror="this.remove()"></div></div></div>
+    <div class="polaroid p5"><div class="polaroid-inner"><div class="polaroid-photo">&#9825;<img src="11.jpeg" alt="" onerror="this.remove()"></div></div></div>
+    <div class="polaroid p6"><div class="polaroid-inner"><div class="polaroid-photo">&#9825;<img src="12.jpeg" alt="" onerror="this.remove()"></div></div></div>
+  </div>
+  <div class="mem-lightbox" id="memLightbox"><img id="memLbImg" alt=""></div>
+
+  <script src="script.js"></script>
+
+  <script>
+    (function(){
+      var lb = document.getElementById('memLightbox');
+      var lbImg = document.getElementById('memLbImg');
+      document.getElementById('memories').addEventListener('click', function(e){
+        var img = e.target.closest('.polaroid') && e.target.closest('.polaroid').querySelector('img');
+        if (!img) return;                 // placeholder frame: nothing to enlarge
+        lbImg.src = img.src;
+        lb.classList.add('show');
+      });
+      lb.addEventListener('click', function(){ lb.classList.remove('show'); });
+    })();
+  </script>
+</body>
+</html>
